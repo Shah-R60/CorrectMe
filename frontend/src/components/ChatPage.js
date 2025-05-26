@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
+import styles from './ChatPage.module.css';
 
 const SIGNAL_SERVER = 'http://localhost:5000';
 
@@ -16,7 +17,8 @@ function ChatPage({ topic }) {
   const navigate = useNavigate();
   const [myId, setMyId]  = useState(null);
   const [duration, setDuration] = useState(0);
-  const timerRef = useRef(null);
+  const [startTime, setStartTime] = useState(null);
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     socketRef.current = io(SIGNAL_SERVER);
@@ -26,8 +28,9 @@ function ChatPage({ topic }) {
     setStatus('Looking for a partner...');
     socketRef.current.emit('find_partner');
 
-    socketRef.current.on('partner_found', async ({ partnerId }) => {
+    socketRef.current.on('partner_found', async ({ partnerId, startTime }) => {
       setPartnerId(partnerId);
+      setStartTime(startTime);
       setStatus('Partner found! Connecting...');
       await startCall(partnerId, true);
     });
@@ -50,12 +53,10 @@ function ChatPage({ topic }) {
 
     socketRef.current.on('partner_disconnected', ({ id }) => {
       if (id === partnerId) {
-        setStatus('Your partner has disconnected, Due to Network Issues');
-        setCallActive(false);
         cleanup();
-        setTimeout(() => {
-          navigate('/');
-        }, 10000);
+        setStatus('Your partner has disconnected.');
+        setCallActive(false);
+        // Do not navigate away
       }
     });
 
@@ -114,11 +115,7 @@ function ChatPage({ topic }) {
     }
     setCallActive(true);
     setStatus('Connected! You are now talking.');
-    setDuration(0);
-    if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setDuration(prev => prev + 1);
-    }, 1000);
+    setDuration(0); // Reset duration, but will be set by useEffect
   }
 
   function cleanup() {
@@ -131,10 +128,6 @@ function ChatPage({ topic }) {
       localStreamRef.current = null;
     }
     setCallActive(false);
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
   }
 
   function leaveCall() {
@@ -150,11 +143,11 @@ function ChatPage({ topic }) {
     if (!socketRef.current) return;
     // Listen for forced disconnect from partner
     socketRef.current.on('force_disconnect', () => {
+      cleanup();
       setStatus('Partner left the call.');
       setTimeout(() => {
-        cleanup();
         navigate('/');
-      }, 15000);
+      }, 1000);
     });
     return () => {
       if (socketRef.current) {
@@ -164,22 +157,71 @@ function ChatPage({ topic }) {
     // eslint-disable-next-line
   }, [navigate]);
 
+  useEffect(() => {
+    if (!callActive || !startTime) return;
+    setDuration(Math.floor((Date.now() - startTime) / 1000)); // Set initial duration
+    const interval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      setDuration(elapsed);
+      if (elapsed >= 900) { // 15 minutes
+        cleanup();
+        setStatus('Call ended: 15 minute time limit reached.');
+        setCallActive(false);
+        clearInterval(interval);
+        setTimeout(() => {
+          navigate('/');
+        }, 2000);
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [callActive, startTime]);
+
   return (
-    <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-      <h2>Topic: {topic}</h2>
-      <p><strong>Your Socket ID:</strong> {myId || 'Connecting...'}</p>
-      <p>Status: {status}</p>
-      {callActive && (
-        <div>
-          <audio ref={remoteAudioRef} autoPlay />
-          <p>Talking to a stranger...</p>
-          <p><strong>Duration:</strong> {String(Math.floor(duration / 60)).padStart(2, '0')}:{String(duration % 60).padStart(2, '0')}</p>
-          <p><strong>Partner Socket ID:</strong> {partnerId}</p>
+    <div className={styles.container + (darkMode ? ' ' + styles.dark : '')}>
+      <div className={styles.card}>
+        <button
+          style={{
+            position: 'absolute',
+            top: 18,
+            right: 24,
+            background: 'none',
+            border: 'none',
+            fontSize: '1.3rem',
+            cursor: 'pointer',
+            color: darkMode ? '#fff' : '#222',
+            zIndex: 2
+          }}
+          aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+          onClick={() => setDarkMode(dm => !dm)}
+        >
+          {darkMode ? '🌙' : '☀️'}
+        </button>
+        <h2 className={styles.topic}>Topic: <span>{topic}</span></h2>
+        <div className={styles.myId} style={{ marginBottom: '1.2rem', fontSize: '1rem' }}>
+          <strong>Your Socket ID:</strong>
+          <div className={styles.myId}>{myId || 'Connecting...'}</div>
         </div>
-      )}
-      <button onClick={leaveCall} style={{ marginTop: '2rem', padding: '0.7rem 2rem' }}>
-        Leave
-      </button>
+        <div className={styles.status}>{status}</div>
+        {callActive && (
+          <div style={{ marginBottom: '1.5rem' }}>
+            <audio ref={remoteAudioRef} autoPlay />
+            <div className={styles.talking}>Talking to a stranger...</div>
+            <div className={styles.timer}>
+              {String(Math.floor(duration / 60)).padStart(2, '0')}:{String(duration % 60).padStart(2, '0')}
+            </div>
+            <div className={styles.partnerId} style={{ fontSize: '0.98rem', marginTop: '0.5rem' }}>
+              <strong>Partner Socket ID:</strong>
+              <div className={styles.partnerId}>{partnerId}</div>
+            </div>
+          </div>
+        )}
+        <button
+          onClick={leaveCall}
+          className={styles.leaveBtn}
+        >
+          Leave
+        </button>
+      </div>
     </div>
   );
 }

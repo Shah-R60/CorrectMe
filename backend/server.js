@@ -34,8 +34,9 @@ io.on('connection', (socket) => {
       waitingUser = null;
       partners[socket.id] = partnerId;
       partners[partnerId] = socket.id;
-      socket.emit('partner_found', { partnerId });
-      io.to(partnerId).emit('partner_found', { partnerId: socket.id });
+      const startTime = Date.now();
+      socket.emit('partner_found', { partnerId, startTime });
+      io.to(partnerId).emit('partner_found', { partnerId: socket.id, startTime });
     } else {
       waitingUser = socket.id;
     }

@@ -1,0 +1,105 @@
+:root {
+  --bg-gradient: linear-gradient(135deg, #1d528d 0%, #b3d8fd 100%);
+  --card-bg: #fff;
+  --card-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  --topic-color: #1565c0;
+  --topic-accent: #1976d2;
+  --id-color: #1976d2;
+  --partnerid-color: #64b5f6;
+  --status-color: #1976d2;
+  --talking-color: #1565c0;
+  --timer-color: #1976d2;
+  --button-bg: linear-gradient(90deg, #1976d2 0%, #64b5f6 100%);
+  --button-bg-hover: linear-gradient(90deg, #1565c0 0%, #42a5f5 100%);
+  --button-text: #fff;
+}
+
+.dark {
+  --bg-gradient: linear-gradient(135deg, #0f2027 0%, #2c5364 100%);
+  --card-bg: #182848;
+  --card-shadow: 0 4px 32px rgba(25, 118, 210, 0.25);
+  --topic-color: #e3f2fd;
+  --topic-accent: #90caf9;
+  --id-color: #90caf9;
+  --partnerid-color: #64b5f6;
+  --status-color: #90caf9;
+  --talking-color: #90caf9;
+  --timer-color: #90caf9;
+  --button-bg: linear-gradient(90deg, #1976d2 0%, #64b5f6 100%);
+  --button-bg-hover: linear-gradient(90deg, #1565c0 0%, #42a5f5 100%);
+  --button-text: #fff;
+}
+
+.container {
+  min-height: 100vh;
+  background: var(--bg-gradient);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: 1.5rem;
+  box-shadow: var(--card-shadow);
+  padding: 2.5rem 2rem;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+.topic {
+  color: var(--topic-color);
+  margin-bottom: 1.2rem;
+}
+.topic span {
+  color: var(--topic-accent);
+}
+
+.myId, .partnerId {
+  font-family: monospace;
+  font-size: 0.95rem;
+  color: var(--id-color);
+  word-break: break-all;
+}
+.partnerId {
+  color: var(--partnerid-color);
+}
+
+.status {
+  margin-bottom: 1.2rem;
+  font-size: 1.1rem;
+  color: var(--status-color);
+}
+
+.talking {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--talking-color);
+  margin-bottom: 0.5rem;
+}
+
+.timer {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--timer-color);
+  margin: 0.5rem 0;
+}
+
+.leaveBtn {
+  margin-top: 1.2rem;
+  padding: 0.9rem 2.5rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--button-text);
+  background: var(--button-bg);
+  border: none;
+  border-radius: 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.leaveBtn:hover {
+  background: var(--button-bg-hover);
+} 
