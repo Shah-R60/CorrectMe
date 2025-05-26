@@ -23,15 +23,17 @@ const io = new Server(server, {
 
 // Matchmaking queue
 let waitingUser = null;
+const partners = {}; // socket.id -> partnerId
 
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
   socket.on('find_partner', () => {
     if (waitingUser && waitingUser !== socket.id) {
-      // Pair the users
       const partnerId = waitingUser;
       waitingUser = null;
+      partners[socket.id] = partnerId;
+      partners[partnerId] = socket.id;
       socket.emit('partner_found', { partnerId });
       io.to(partnerId).emit('partner_found', { partnerId: socket.id });
     } else {
@@ -47,13 +49,21 @@ io.on('connection', (socket) => {
   // Handle leave_call event
   socket.on('leave_call', ({ to }) => {
     io.to(to).emit('force_disconnect');
+    // Clean up partners mapping
+    delete partners[socket.id];
+    delete partners[to];
   });
 
   socket.on('disconnect', () => {
     if (waitingUser === socket.id) {
       waitingUser = null;
     }
-    io.emit('partner_disconnected', { id: socket.id });
+    const partnerId = partners[socket.id];
+    if (partnerId) {
+      io.to(partnerId).emit('partner_disconnected', { id: socket.id });
+      delete partners[partnerId];
+      delete partners[socket.id];
+    }
     console.log('User disconnected:', socket.id);
   });
 });
