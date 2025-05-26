@@ -14,7 +14,9 @@ function ChatPage({ topic }) {
   const remoteAudioRef = useRef();
   const pendingStreamRef = useRef(null);
   const navigate = useNavigate();
-  const [myId, setMyId] = useState(null);
+  const [myId, setMyId]  = useState(null);
+  const [duration, setDuration] = useState(0);
+  const timerRef = useRef(null);
 
   useEffect(() => {
     socketRef.current = io(SIGNAL_SERVER);
@@ -48,12 +50,12 @@ function ChatPage({ topic }) {
 
     socketRef.current.on('partner_disconnected', ({ id }) => {
       if (id === partnerId) {
-        setStatus('Your partner has disconnected. You will be returned to the home page.');
+        setStatus('Your partner has disconnected, Due to Network Issues');
         setCallActive(false);
         cleanup();
         setTimeout(() => {
           navigate('/');
-        }, 2000);
+        }, 10000);
       }
     });
 
@@ -112,6 +114,11 @@ function ChatPage({ topic }) {
     }
     setCallActive(true);
     setStatus('Connected! You are now talking.');
+    setDuration(0);
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setDuration(prev => prev + 1);
+    }, 1000);
   }
 
   function cleanup() {
@@ -124,6 +131,10 @@ function ChatPage({ topic }) {
       localStreamRef.current = null;
     }
     setCallActive(false);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
   }
 
   function leaveCall() {
@@ -143,7 +154,7 @@ function ChatPage({ topic }) {
       setTimeout(() => {
         cleanup();
         navigate('/');
-      }, 1500);
+      }, 15000);
     });
     return () => {
       if (socketRef.current) {
@@ -162,6 +173,7 @@ function ChatPage({ topic }) {
         <div>
           <audio ref={remoteAudioRef} autoPlay />
           <p>Talking to a stranger...</p>
+          <p><strong>Duration:</strong> {String(Math.floor(duration / 60)).padStart(2, '0')}:{String(duration % 60).padStart(2, '0')}</p>
           <p><strong>Partner Socket ID:</strong> {partnerId}</p>
         </div>
       )}
