@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import styles from './LandingPage.module.css';
 
-const SIGNAL_SERVER = 'http://localhost:5000';
+const SIGNAL_SERVER = 'correct-me-backend.vercel.app';
 
 function LandingPage() {
   const navigate = useNavigate();
