@@ -1,0 +1,302 @@
+:root {
+  --notice-gradient: linear-gradient(135deg, #000814 0%, #001d3d 50%, #003566 100%);
+  --notice-overlay: rgba(0, 0, 0, 0.8);
+  --notice-accent: #1976d2;
+  --notice-warning: #ff9800;
+  --notice-success: #4caf50;
+  --notice-info: #2196f3;
+  --text-primary: #ffffff;
+  --text-secondary: #b3c5d9;
+  --text-accent: #90caf9;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--notice-overlay);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.noticeContainer {
+  background: var(--notice-gradient);
+  border-radius: 1.5rem;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.5),
+    0 0 100px rgba(25, 118, 210, 0.1);
+  animation: slideInUp 0.4s ease-out;
+  position: relative;
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem 2rem 1rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.titleSection {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.bellIcon {
+  font-size: 1.5rem;
+  color: var(--notice-accent);
+  animation: bellRing 2s ease-in-out infinite;
+}
+
+@keyframes bellRing {
+  0%, 100% { transform: rotate(0deg); }
+  10%, 90% { transform: rotate(-5deg); }
+  20%, 80% { transform: rotate(5deg); }
+  30%, 70% { transform: rotate(-5deg); }
+  40%, 60% { transform: rotate(5deg); }
+  50% { transform: rotate(0deg); }
+}
+
+.title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-accent) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  transform: scale(1.1);
+}
+
+.content {
+  padding: 1.5rem 2rem;
+}
+
+.noticeItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.noticeItem:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.noticeItem:last-child {
+  margin-bottom: 0;
+}
+
+.infoIcon {
+  font-size: 1.3rem;
+  color: var(--notice-info);
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.warningIcon {
+  font-size: 1.3rem;
+  color: var(--notice-warning);
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.updateIcon {
+  font-size: 1.3rem;
+  color: var(--notice-success);
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.noticeText {
+  flex: 1;
+}
+
+.noticeText h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem 0;
+}
+
+.noticeText p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.footer {
+  padding: 1rem 2rem 2rem 2rem;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.acknowledgeButton {
+  background: linear-gradient(90deg, var(--notice-accent) 0%, #64b5f6 100%);
+  border: none;
+  border-radius: 2rem;
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+  min-width: 150px;
+}
+
+.acknowledgeButton:hover {
+  background: linear-gradient(90deg, #1565c0 0%, #42a5f5 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(25, 118, 210, 0.4);
+}
+
+.acknowledgeButton:active {
+  transform: translateY(0);
+}
+
+/* Custom scrollbar for notice container */
+.noticeContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.noticeContainer::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.noticeContainer::-webkit-scrollbar-thumb {
+  background: var(--notice-accent);
+  border-radius: 3px;
+}
+
+.noticeContainer::-webkit-scrollbar-thumb:hover {
+  background: #1565c0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .noticeContainer {
+    width: 95%;
+    max-height: 85vh;
+  }
+
+  .header {
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .content {
+    padding: 1rem 1.5rem;
+  }
+
+  .noticeItem {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: center;
+  }
+
+  .footer {
+    padding: 1rem 1.5rem 1.5rem 1.5rem;
+  }
+
+  .acknowledgeButton {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .noticeContainer {
+    width: 98%;
+    border-radius: 1rem;
+  }
+
+  .header {
+    padding: 1rem;
+  }
+
+  .title {
+    font-size: 1.3rem;
+  }
+
+  .content {
+    padding: 1rem;
+  }
+
+  .noticeItem {
+    padding: 0.75rem;
+  }
+
+  .noticeText h3 {
+    font-size: 1rem;
+  }
+
+  .noticeText p {
+    font-size: 0.9rem;
+  }
+}

@@ -1,0 +1,134 @@
+:root {
+  --navbar-gradient: linear-gradient(135deg, #000814 0%, #001d3d 50%, #003566 100%);
+  --navbar-accent: linear-gradient(90deg, #1976d2 0%, #64b5f6 100%);
+  --text-primary: #ffffff;
+  --text-accent: #90caf9;
+  --text-muted: #b3c5d9;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  background: var(--navbar-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 2rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  border-bottom: 2px solid #1976d2;
+}
+
+.navLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.logoIcon {
+  font-size: 2rem;
+  color: #1976d2;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.10);
+}
+
+.logoText {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: 0.01em;
+}
+
+.navRight {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.navLink {
+  color: var(--text-primary);
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 0.3rem 0.8rem;
+  border-radius: 1.2rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+.navLink:hover {
+  background: rgba(25, 118, 210, 0.12);
+  color: #90caf9;
+}
+
+.noticeButton {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1.2rem;
+  color: var(--text-primary);
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 0.3rem 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.noticeButton:hover {
+  background: rgba(25, 118, 210, 0.12);
+  color: #90caf9;
+  transform: translateY(-1px);
+}
+
+.noticeIcon {
+  font-size: 0.9rem;
+  animation: bellPulse 2s ease-in-out infinite;
+}
+
+@keyframes bellPulse {
+  0%, 100% { 
+    transform: scale(1);
+    color: var(--text-primary);
+  }
+  50% { 
+    transform: scale(1.1);
+    color: #90caf9;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.5rem 1rem;
+  }
+  .navRight {
+    gap: 1rem;
+  }
+  .logoText {
+    font-size: 1.1rem;
+  }
+  .noticeButton {
+    padding: 0.25rem 0.6rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.5rem 0.5rem;
+  }
+  .navRight {
+    gap: 0.5rem;
+    margin-top: 0.3rem;
+  }
+  .noticeButton {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.9rem;
+    gap: 0.3rem;
+  }
+}

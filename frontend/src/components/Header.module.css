@@ -10,7 +10,7 @@
 .header {
   position: relative;
   background: var(--header-gradient);
-  padding: 2rem 1.5rem;
+  padding: 1rem 1.5rem;
   text-align: center;
   overflow: hidden;
   border-bottom: 3px solid transparent;
@@ -56,9 +56,9 @@
   background: rgba(25, 118, 210, 0.2);
   border: 1px solid var(--text-accent);
   border-radius: 2rem;
-  padding: 0.5rem 1.2rem;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
+  padding: 0.2rem 1rem;
+  /* margin-bottom: 1rem; */
+  font-size: 1 rem;
   font-weight: 600;
   color: var(--text-accent);
   text-transform: uppercase;
@@ -149,8 +149,7 @@
   .topicText {
     font-size: 1.1rem;
   }
-  
-  .topicLabel {
+    .topicLabel {
     font-size: 0.8rem;
     padding: 0.4rem 1rem;
   }
@@ -168,8 +167,7 @@
   .topicText {
     font-size: 1rem;
   }
-  
-  .decorativeIcon {
+    .decorativeIcon {
     display: none;
   }
 }

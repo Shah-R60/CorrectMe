@@ -27,7 +27,7 @@ function LandingPage() {
           <span>{liveUsers} users online</span>
         </div>
         
-        <h1 className={styles.title}>Voice Omegle</h1>
+        <h1 className={styles.title}>CorrectMe</h1>
         <p className={styles.subtitle}>
           Connect instantly with strangers worldwide for authentic voice conversations. 
           Anonymous, secure, and always surprising.
@@ -44,4 +44,4 @@ function LandingPage() {
   );
 }
 
-export default LandingPage; 
+export default LandingPage;

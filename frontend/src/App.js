@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import LandingPage from './components/LandingPage';
 import ChatPage from './components/ChatPage';
 import Header from './components/Header';
+import Navbar from './components/Navbar';
 import './app.css';
 
 
@@ -14,9 +15,9 @@ function App() {
       .then(res => res.json())
       .then(data => setTopic(data.topic));
   }, []);
-
   return (
     <div>
+      <Navbar />
       <Header topic={topic} />
       <Routes>
         <Route path="/" element={<LandingPage />} />

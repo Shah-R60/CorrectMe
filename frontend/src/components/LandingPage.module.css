@@ -1,5 +1,5 @@
 :root {
-  --primary-gradient: linear-gradient(135deg, #000000 0%, #010027 100%);
+  --primary-gradient: linear-gradient(135deg, #6758c7 0%, #83b2d7 100%);
   --card-gradient: linear-gradient(145deg, rgba(8, 0, 255, 0.1) 0%, rgba(4, 0, 41, 0.8) 100%);
   --accent-color: #90caf9;
   --primary-blue: #1976d2;
@@ -40,7 +40,7 @@
 .mainCard {
   background: var(--card-gradient);
   backdrop-filter: blur(20px);
-  border-radius: 2rem;
+  border-radius: .8rem;
   padding: 3rem 2.5rem;
   max-width: 500px;
   width: 100%;
@@ -141,6 +141,7 @@
   position: relative;
   overflow: hidden;
   min-width: 200px;
+  margin-bottom: 3rem;
 }
 
 .startButton::before {
