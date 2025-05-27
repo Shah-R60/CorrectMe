@@ -11,7 +11,7 @@ function App() {
   const [topic, setTopic] = useState('');
 
   useEffect(() => {
-    fetch('correct-me-backend.vercel.app/topic')
+    fetch('https://correct-me-backend.vercel.app/topic')
       .then(res => res.json())
       .then(data => setTopic(data.topic));
   }, []);
