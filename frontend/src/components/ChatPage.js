@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
+import { FaPhoneAlt, FaBolt, FaExclamationTriangle, FaInfoCircle, FaCog } from 'react-icons/fa';
 import styles from './ChatPage.module.css';
 
 const SIGNAL_SERVER = 'http://localhost:5000';
@@ -14,11 +15,11 @@ function ChatPage({ topic }) {
   const localStreamRef = useRef();
   const remoteAudioRef = useRef();
   const pendingStreamRef = useRef(null);
-  const navigate = useNavigate();
-  const [myId, setMyId]  = useState(null);
+  const navigate = useNavigate();  const [myId, setMyId]  = useState(null);
   const [duration, setDuration] = useState(0);
   const [startTime, setStartTime] = useState(null);
-  const [darkMode, setDarkMode] = useState(false);
+  const [showConnectedMsg, setShowConnectedMsg] = useState(false);
+  const [showSafetyMsg, setShowSafetyMsg] = useState(true);
 
   useEffect(() => {
     socketRef.current = io(SIGNAL_SERVER);
@@ -56,7 +57,6 @@ function ChatPage({ topic }) {
         cleanup();
         setStatus('Your partner has disconnected.');
         setCallActive(false);
-        // Do not navigate away
       }
     });
 
@@ -172,56 +172,99 @@ function ChatPage({ topic }) {
           navigate('/');
         }, 2000);
       }
-    }, 1000);
-    return () => clearInterval(interval);
+    }, 1000);    return () => clearInterval(interval);
   }, [callActive, startTime]);
 
+  // Auto-hide safety message after 5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSafetyMsg(false);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Show connected message when call becomes active and hide after 5 seconds
+  useEffect(() => {
+    if (callActive) {
+      setShowConnectedMsg(true);
+      const timer = setTimeout(() => {
+        setShowConnectedMsg(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [callActive]);
+
   return (
-    <div className={styles.container + (darkMode ? ' ' + styles.dark : '')}>
-      <div className={styles.card}>
-        <button
-          style={{
-            position: 'absolute',
-            top: 18,
-            right: 24,
-            background: 'none',
-            border: 'none',
-            fontSize: '1.3rem',
-            cursor: 'pointer',
-            color: darkMode ? '#fff' : '#222',
-            zIndex: 2
-          }}
-          aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-          onClick={() => setDarkMode(dm => !dm)}
-        >
-          {darkMode ? '🌙' : '☀️'}
+    <div className={styles.container}>
+      {/* Top Action Buttons */}
+      <div className={styles.topActions}>
+        <button className={`${styles.actionButton} ${styles.warning}`}>
+          <FaExclamationTriangle />
+          Report
         </button>
-        <h2 className={styles.topic}>Topic: <span>{topic}</span></h2>
-        <div className={styles.myId} style={{ marginBottom: '1.2rem', fontSize: '1rem' }}>
-          <strong>Your Socket ID:</strong>
-          <div className={styles.myId}>{myId || 'Connecting...'}</div>
-        </div>
-        <div className={styles.status}>{status}</div>
-        {callActive && (
-          <div style={{ marginBottom: '1.5rem' }}>
-            <audio ref={remoteAudioRef} autoPlay />
-            <div className={styles.talking}>Talking to a stranger...</div>
-            <div className={styles.timer}>
-              {String(Math.floor(duration / 60)).padStart(2, '0')}:{String(duration % 60).padStart(2, '0')}
-            </div>
-            <div className={styles.partnerId} style={{ fontSize: '0.98rem', marginTop: '0.5rem' }}>
-              <strong>Partner Socket ID:</strong>
-              <div className={styles.partnerId}>{partnerId}</div>
-            </div>
-          </div>
-        )}
-        <button
-          onClick={leaveCall}
-          className={styles.leaveBtn}
-        >
-          Leave
+        <button className={`${styles.actionButton} ${styles.info}`}>
+          <FaInfoCircle />
+          Info
+        </button>
+        <button className={styles.actionButton}>
+          <FaCog />
+          Settings
         </button>
       </div>
+
+      {/* Main Call Area */}
+      <div className={styles.callArea}>
+        <div className={styles.card}>
+          <div className={styles.callIconCircle}>
+            <FaPhoneAlt className={styles.callIcon} />
+            <FaBolt className={styles.boltIcon} />
+          </div>
+          
+          <div className={styles.status}>{status}</div>
+          
+          {callActive && (
+            <div>
+              <audio ref={remoteAudioRef} autoPlay />
+              <div className={styles.talking}>Talking to a stranger...</div>
+              <div className={styles.timer}>
+                {String(Math.floor(duration / 60)).padStart(2, '0')}:{String(duration % 60).padStart(2, '0')}
+              </div>
+              
+              {/* Star Rating */}
+              <div className={styles.starRow}>
+                <span className={styles.star}>⭐</span>
+                <span className={styles.star}>⭐</span>
+                <span className={styles.star}>⭐</span>
+                <span className={styles.star}>⭐</span>
+                <span className={styles.star}>⭐</span>
+              </div>
+            </div>
+          )}
+          
+          <button
+            onClick={leaveCall}
+            className={styles.leaveBtn}
+          >
+            Leave
+          </button>
+        </div>
+      </div>      {/* Status Bar */}
+      {callActive && showConnectedMsg && (
+        <div className={styles.statusBar}>
+          <div className={styles.statusConnected}>
+            🟢 Connected
+          </div>
+        </div>
+      )}
+
+      {/* Safety Info Bar */}
+      {showSafetyMsg && (
+        <div className={styles.infoBar}>
+          <div className={styles.infoMsg}>
+            ⚠️ Stay safe: Don't share personal information
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -25,7 +25,12 @@ const io = new Server(server, {
 let waitingUser = null;
 const partners = {}; // socket.id -> partnerId
 
+function broadcastUserCount() {
+  io.emit('user_count', { count: io.engine.clientsCount });
+}
+
 io.on('connection', (socket) => {
+  broadcastUserCount();
   console.log('User connected:', socket.id);
 
   socket.on('find_partner', () => {
@@ -65,6 +70,7 @@ io.on('connection', (socket) => {
       delete partners[partnerId];
       delete partners[socket.id];
     }
+    broadcastUserCount();
     console.log('User disconnected:', socket.id);
   });
 });

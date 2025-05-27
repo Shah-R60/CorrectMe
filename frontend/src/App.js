@@ -3,6 +3,8 @@ import { Routes, Route } from 'react-router-dom';
 import LandingPage from './components/LandingPage';
 import ChatPage from './components/ChatPage';
 import Header from './components/Header';
+import './app.css';
+
 
 function App() {
   const [topic, setTopic] = useState('');
