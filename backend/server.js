@@ -9,6 +9,10 @@ app.use(cors());
 // Mock topic of the day
 const topicOfTheDay = 'Is AI going to change the world for better or worse?';
 
+app.get('/', (req, res) => {
+  res.send('Welcome to the CorrectMe Signal Server!');
+});
+
 app.get('/topic', (req, res) => {
   res.json({ topic: topicOfTheDay });
 });
