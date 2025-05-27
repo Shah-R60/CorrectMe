@@ -10,7 +10,7 @@ app.use(cors());
 const topicOfTheDay = 'Is AI going to change the world for better or worse?';
 
 app.get('/', (req, res) => {
-  res.send('Welcome to the CorrectMe Signal Server!');
+  res.send('Welcome to the CorrectMe Signal Server! hiiii hahahah');
 });
 
 app.get('/topic', (req, res) => {
@@ -20,8 +20,9 @@ app.get('/topic', (req, res) => {
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'https://correct-frontend.vercel.app',
-    methods: ['GET', 'POST']
+    origin: "*", // You can also use an array here
+    methods: ["GET", "POST"], // Optional: specify allowed methods
+    credentials: true // Optional: if you're sending cookies/auth headers
   }
 });
 
