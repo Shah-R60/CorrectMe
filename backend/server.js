@@ -10,7 +10,7 @@ app.use(cors());
 const topicOfTheDay = 'Is AI going to change the world for better or worse?';
 
 app.get('/', (req, res) => {
-  res.send('Welcome to the CorrectMe Signal Server!');
+  res.send('Welcome to the CorrectMe Signal Server! hiiii');
 });
 
 app.get('/topic', (req, res) => {
