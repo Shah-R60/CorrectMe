@@ -4,7 +4,7 @@ import { io, Socket } from 'socket.io-client';
 import { FaPhoneAlt, FaBolt, FaExclamationTriangle, FaInfoCircle, FaCog } from 'react-icons/fa';
 import styles from './ChatPage.module.css';
 
-const SIGNAL_SERVER = 'https://correct-me-backend.vercel.app';
+const SIGNAL_SERVER = 'https://correctmebackend.onrender.com';
 
 function ChatPage({ topic }) {
   const [status, setStatus] = useState('Connecting to server...');
