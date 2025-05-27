@@ -29,26 +29,36 @@ function ChatPage({ topic }) {
     setStatus('Looking for a partner...');
     socketRef.current.emit('find_partner');
 
-    socketRef.current.on('partner_found', async ({ partnerId, startTime }) => {
+    socketRef.current.on('partner_found', async ({ partnerId, startTime, shouldInitiate }) => {
       setPartnerId(partnerId);
       setStartTime(startTime);
       setStatus('Partner found! Connecting...');
-      await startCall(partnerId, true);
+      await startCall(partnerId, shouldInitiate); // ← Use shouldInitiate flag
     });
 
     socketRef.current.on('signal', async ({ from, data }) => {
-      if (!pcRef.current) return;
-      if (data.type === 'offer') {
-        await pcRef.current.setRemoteDescription(new RTCSessionDescription(data));
-        const answer = await pcRef.current.createAnswer();
-        await pcRef.current.setLocalDescription(answer);
-        socketRef.current.emit('signal', { to: from, data: answer });
-      } else if (data.type === 'answer') {
-        await pcRef.current.setRemoteDescription(new RTCSessionDescription(data));
-      } else if (data.candidate) {
-        try {
+      if (!pcRef.current) {
+        console.log('No peer connection available');
+        return;
+      }
+      
+      try {
+        if (data.type === 'offer') {
+          console.log('Received offer from', from);
+          await pcRef.current.setRemoteDescription(new RTCSessionDescription(data));
+          const answer = await pcRef.current.createAnswer();
+          await pcRef.current.setLocalDescription(answer);
+          socketRef.current.emit('signal', { to: from, data: answer });
+          console.log('Sent answer to', from);
+        } else if (data.type === 'answer') {
+          console.log('Received answer from', from);
+          await pcRef.current.setRemoteDescription(new RTCSessionDescription(data));
+        } else if (data.candidate) {
+          console.log('Received ICE candidate from', from);
           await pcRef.current.addIceCandidate(new RTCIceCandidate(data.candidate));
-        } catch (e) {}
+        }
+      } catch (error) {
+        console.error('Error handling signal:', error);
       }
     });
 
@@ -78,7 +88,8 @@ function ChatPage({ topic }) {
   async function startCall(partnerId, isInitiator) {
     pcRef.current = new RTCPeerConnection({
       iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' }
+        { urls: 'stun:stun.l.google.com:19302' },
+        // { urls: 'stun:stun1.l.google.com:19302' } // Add backup STUN server
       ]
     });
 
@@ -92,6 +103,7 @@ function ChatPage({ topic }) {
     };
 
     pcRef.current.ontrack = (event) => {
+      console.log('Received remote audio stream'); // ← Add logging
       if (remoteAudioRef.current) {
         remoteAudioRef.current.srcObject = event.streams[0];
       } else {
@@ -99,23 +111,43 @@ function ChatPage({ topic }) {
       }
     };
 
+    // BOTH users need to get their microphone stream
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+      console.log('Getting user media...'); // ← Add logging
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        }, 
+        video: false 
+      });
       localStreamRef.current = stream;
-      stream.getTracks().forEach(track => pcRef.current.addTrack(track, stream));
+      
+      // Add all tracks to the peer connection
+      stream.getTracks().forEach(track => {
+        console.log('Adding local track:', track.kind); // ← Add logging
+        pcRef.current.addTrack(track, stream);
+      });
     } catch (err) {
+      console.error('Microphone access error:', err); // ← Add logging
       setStatus('Microphone access denied.');
       return;
     }
 
+    // Only the initiator creates the offer
     if (isInitiator) {
+      console.log('Creating offer as initiator'); // ← Add logging
       const offer = await pcRef.current.createOffer();
       await pcRef.current.setLocalDescription(offer);
       socketRef.current.emit('signal', { to: partnerId, data: offer });
+    } else {
+      console.log('Waiting for offer from partner'); // ← Add logging
     }
+    
     setCallActive(true);
     setStatus('Connected! You are now talking.');
-    setDuration(0); // Reset duration, but will be set by useEffect
+    setShowConnectedMsg(true);
   }
 
   function cleanup() {
@@ -269,4 +301,4 @@ function ChatPage({ topic }) {
   );
 }
 
-export default ChatPage; 
+export default ChatPage;

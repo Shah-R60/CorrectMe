@@ -44,10 +44,23 @@ io.on('connection', (socket) => {
       partners[socket.id] = partnerId;
       partners[partnerId] = socket.id;
       const startTime = Date.now();
-      socket.emit('partner_found', { partnerId, startTime });
-      io.to(partnerId).emit('partner_found', { partnerId: socket.id, startTime });
+      
+      // First user (partnerId) should NOT initiate - they wait for offer
+      io.to(partnerId).emit('partner_found', { 
+        partnerId: socket.id, 
+        startTime,
+        shouldInitiate: false  // ← ADD THIS
+      });
+      
+      // Second user (socket.id) should initiate - they create offer
+      socket.emit('partner_found', { 
+        partnerId, 
+        startTime,
+        shouldInitiate: true   // ← ADD THIS
+      });
     } else {
       waitingUser = socket.id;
+      socket.emit('waiting_for_partner');
     }
   });
 
@@ -82,4 +95,4 @@ io.on('connection', (socket) => {
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-}); 
+});
