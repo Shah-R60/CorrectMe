@@ -20,8 +20,9 @@ app.get('/topic', (req, res) => {
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'https://correct-frontend.vercel.app',
-    methods: ['GET', 'POST']
+    origin: "https://correct-frontend.vercel.app", // You can also use an array here
+    methods: ["GET", "POST"], // Optional: specify allowed methods
+    credentials: true // Optional: if you're sending cookies/auth headers
   }
 });
 
